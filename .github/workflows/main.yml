@@ -10,23 +10,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: CuandoNosotrosAndroid_GitHub
+
     steps:
       - name: Descargar proyecto
         uses: actions/checkout@v4
 
-      - name: Configurar Java
+      - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Gradle
+      - name: Configurar Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
 
-      - name: Dar permisos
-        run: chmod +x gradlew || true
+      - name: Comprobar proyecto
+        run: |
+          pwd
+          ls -la
+          test -f settings.gradle
+          test -f build.gradle
 
       - name: Compilar APK
         run: gradle :app:assembleDebug
@@ -35,11 +43,11 @@ jobs:
         run: |
           mkdir -p apk
           cp app/build/outputs/apk/debug/app-debug.apk \
-             "apk/Cuando_nosotros_eramos_jovenes.apk"
+             apk/Cuando_nosotros_eramos_jovenes.apk
 
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
           name: Cuando-nosotros-eramos-jovenes-APK
-          path: apk/Cuando_nosotros_eramos_jovenes.apk
+          path: CuandoNosotrosAndroid_GitHub/apk/Cuando_nosotros_eramos_jovenes.apk
           if-no-files-found: error
